@@ -27,23 +27,23 @@ class Table():
         #     return winning_player
 
         def _winning_rule(arr):
-            win1 = np.array([1,1,1,1])
-            win2 = np.array([2,2,2,2])
+            win1rule = np.array([1,1,1,1])
+            win2rule = np.array([2,2,2,2])
             # subarrays of len = 4
             sub_arrays = [arr[i:i+4] for i in range(len(arr)-3)] 
 
-            player1wins = any([np.array_equal(win1,sub) for sub in sub_arrays])
-            player2wins = any([np.array_equal(win2,sub) for sub in sub_arrays])
+            player1wins = any([np.array_equal(win1rule,sub) for sub in sub_arrays])
+            player2wins = any([np.array_equal(win2rule,sub) for sub in sub_arrays])
 
             if player1wins or player2wins:
                 return True
             else:
                 return False
         
-        def _get_diagonals(a):
+        def _get_diagonals(_table):
             # hacky get all the diagonals
-            diags = [a[::-1,:].diagonal(i) for i in range(-a.shape[0]+1,a.shape[1])]
-            diags.extend(a.diagonal(i) for i in range(a.shape[1]-1,-a.shape[0],-1))
+            diags = [_table[::-1,:].diagonal(i) for i in range(-_table.shape[0]+1,_table.shape[1])]
+            diags.extend(_table.diagonal(i) for i in range(_table.shape[1]-1,-_table.shape[0],-1))
             return diags
 
         def _get_axes(_table):
