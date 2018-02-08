@@ -1,10 +1,12 @@
 import numpy as np
 
 class Table():
-        
+
+
     def __init__(self):
         self.table = np.zeros((6,7), dtype=int)
-    
+
+
     def winning_check(self)-> bool:
         '''
         Checks if there is four equal numbers in every
@@ -16,16 +18,30 @@ class Table():
         droped number.
         '''
         
+        # def _winning_rule_old(arr):
+        #     '''
+        #     BROKEN: Doesn't check if the values are index consecutive
+        #     '''
+        #     unique = np.unique(arr, return_counts=True)
+        #     winning_player = unique[0][unique[1] > 3]
+        #     return winning_player
+
         def _winning_rule(arr):
-            '''
-            BROKEN
-            '''
-            unique = np.unique(arr, return_counts=True)
-            winning_player = unique[0][unique[1] > 3]
-            return winning_player
+            win1 = np.array([1,1,1,1])
+            win2 = np.array([2,2,2,2])
+            # subarrays of len = 4
+            sub_arrays = [arr[i:i+4] for i in range(len(arr)-3)] 
+
+            player1wins = any([np.array_equal(win1,sub) for sub in sub_arrays])
+            player2wins = any([np.array_equal(win2,sub) for sub in sub_arrays])
+
+            if player1wins or player2wins:
+                return True
+            else:
+                return False
         
         def _get_diagonals(a):
-            # hacky getting all the diagonals
+            # hacky get all the diagonals
             diags = [a[::-1,:].diagonal(i) for i in range(-a.shape[0]+1,a.shape[1])]
             diags.extend(a.diagonal(i) for i in range(a.shape[1]-1,-a.shape[0],-1))
             return diags
@@ -38,19 +54,17 @@ class Table():
                 axes.append(_table[:,j])
             return axes
         
-        all_axes = []
-        all_axes.extend(_get_axes(self.table))
-        all_axes.extend(_get_diagonals(self.table))
+        all_arr = []
+        all_arr.extend(_get_axes(self.table))
+        all_arr.extend(_get_diagonals(self.table))
         
-        for ax in all_axes:
-            winner = _winning_rule(ax)
-            if not  winner:
-                # no winner yet
-                pass
-            else:
-                # winner!
+        for arr in all_arr:
+            winner = _winning_rule(arr)
+            if winner:
                 return True
-        
+            else:
+                pass
+                
     def drop(self, player, column):
         '''
         Drops a number (same as player) in the column specified
