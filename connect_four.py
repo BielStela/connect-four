@@ -84,5 +84,26 @@ class Table():
         else:
             return self.table 
     
+    def drop_sim(self, player, column):
+        '''
+        Drops a number (same as player) in the column specified
+        '''
+        colummn_vec = self.table[:,column]
+        non_zero = np.where(colummn_vec != 0)[0]
+        
+        if non_zero.size == 0:                        
+            # sets the stone to the last element 
+            self.table[self.table.shape[0]-1,column] = player
+        else:                                          
+            # sets the stone on the last 0
+            self.table[non_zero[0]-1,column] = player
+        # checking if winning for every drop!
+        if self.winning_check():
+            # we got a winner :)
+            return True
+        else:
+            # no winner yet :(
+            return False 
+    
     def reset(self):
         return self.__init__()
