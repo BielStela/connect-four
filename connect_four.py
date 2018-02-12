@@ -2,7 +2,6 @@ import numpy as np
 
 class Table():
 
-
     def __init__(self):
         self.table = np.zeros((6,7), dtype=int)
     
@@ -20,20 +19,6 @@ class Table():
         else:
             return False
     
-    # def _get_diagonals(self, _table)-> list:
-    #     # hackyly gets all the diagonals
-    #     diags = [_table[::-1,:].diagonal(i) for i in range(-_table.shape[0]+1,_table.shape[1])]
-    #     diags.extend(_table.diagonal(i) for i in range(_table.shape[1]-1,-_table.shape[0],-1))
-    #     return diags
-
-    # def _get_axes(self, _table)-> list:
-    #     axes = []
-    #     for i in range(_table.shape[0]):
-    #         axes.append(_table[i,:])
-    #     for j in range(_table.shape[1]):
-    #         axes.append(_table[:,j])
-    #     return axes
-    
     def _get_diagonals(self, _table, i, j)-> list:
         diags = []
         diags.append(np.diagonal(_table, offset=(j - i)))
@@ -46,18 +31,11 @@ class Table():
         axes.append(_table[:,j])
         return axes
 
-
     def _winning_check(self, i, j)-> bool:
         '''
         Checks if there is four equal numbers in every
         row, column and diagonal of the matrix
-        -------
-        To Do: 
-        Optimize the checking process by checking 
-        just the slices that intersect the last 
-        droped number.
-        '''
-                
+        '''    
         all_arr = []
         all_arr.extend(self._get_axes(self.table, i, j))
         all_arr.extend(self._get_diagonals(self.table, i, j))
@@ -90,10 +68,24 @@ class Table():
         else:
             return self.table 
     
-    def drop_sim(self, player, column)-> bool:
+    def drop_sim(self, player)-> bool:
         '''
         Drop mechanics but faster and bool return for simulation purposes
+        --------
+        Returns: tuple(bool,bool,int,np.array)
+            1. State of the game (True when finished)
+            2. False when tie
+            3. idx of the first drop
+            4. final table
         '''
+        column = np.random.randint(0,7)
+        
+        while np.count_nonzero(self.table[:,column]) == 6:  # checks if column if full and switch to another
+            column = np.random.randint(0,7)
+            if np.count_nonzero(self.table)  == 42:  # Full table with tie!
+                self.reset()
+                return True, True, column, self.table
+
         colummn_vec = self.table[:,column]
         non_zero = np.where(colummn_vec != 0)[0]
         
@@ -108,10 +100,10 @@ class Table():
         # checking if winning for every drop!
         if self._winning_check(i, column):
             # we got a winner :)
-            return True
+            return True, False, column, self.table
         else:
             # no winner yet :(
-            return False 
+            return False, False, column, self.table
     
     def reset(self):
         return self.__init__()
