@@ -35,6 +35,7 @@ class Table():
         '''
         Checks if there is four equal numbers in every
         row, column and diagonal of the matrix
+
         '''    
         all_arr = []
         all_arr.extend(self._get_axes(self.table, i, j))
@@ -50,6 +51,7 @@ class Table():
     def drop(self, player, column):
         '''
         Drops a number (same as player) in the column specified
+
         '''
         colummn_vec = self.table[:,column]
         non_zero = np.where(colummn_vec != 0)[0]
@@ -71,19 +73,30 @@ class Table():
     def drop_sim(self, player)-> bool:
         '''
         Drop mechanics but faster and bool return for simulation purposes
+
+        --------
+        Args:
+            * Player: int, player number (1 or 2)
+
         --------
         Returns: tuple(bool,bool,int,np.array)
             1. State of the game (True when finished)
             2. False when tie
             3. idx of the first drop
             4. final table
+
+        --------
+        To Do:
+            * Count the first drop column of the player that won the game,
+             now is only player 1
+
         '''
         column = np.random.randint(0,7)
         
         while np.count_nonzero(self.table[:,column]) == 6:  # checks if column if full and switch to another
             column = np.random.randint(0,7)
             if np.count_nonzero(self.table)  == 42:  # Full table with tie!
-                self.reset()
+                    self.reset()
                 return True, True, column, self.table
 
         colummn_vec = self.table[:,column]
@@ -106,4 +119,4 @@ class Table():
             return False, False, column, self.table
     
     def reset(self):
-        return self.__init__()
+        return self.table.fill(0)
