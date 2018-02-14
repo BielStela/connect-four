@@ -82,7 +82,7 @@ class Table():
         Returns: tuple(bool,bool,int,np.array)
             1. State of the game (True when finished)
             2. False when tie
-            3. idx of the first drop
+            3. idx of the last drop
             4. final table
 
         --------
@@ -96,7 +96,7 @@ class Table():
         while np.count_nonzero(self.table[:,column]) == 6:  # checks if column if full and switch to another
             column = np.random.randint(0,7)
             if np.count_nonzero(self.table)  == 42:  # Full table with tie!
-                    self.reset()
+                self.reset()
                 return True, True, column, self.table
 
         colummn_vec = self.table[:,column]
@@ -110,6 +110,7 @@ class Table():
             # sets the stone on the last 0
             i = non_zero[0]-1
             self.table[i,column] = player
+            
         # checking if winning for every drop!
         if self._winning_check(i, column):
             # we got a winner :)
